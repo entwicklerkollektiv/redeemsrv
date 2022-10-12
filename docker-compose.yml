@@ -8,6 +8,67 @@ networks:
     driver: bridge
 
 services:
+  traefik:
+    image: traefik:latest
+    restart: unless-stopped
+    command:
+      # define entrypoint (http/80 und https/443)
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # use docker provider
+      - "--providers.docker"
+      - "--providers.docker.exposedByDefault=false"
+      # activate api and dashboard
+      - "--api=true"
+      - "--api.dashboard=true"
+      # logs
+      - "--accesslog=true"
+      - "--log.level=ERROR"
+      # configure letsencrypt
+      - "--certificatesresolvers.leresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.leresolver.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.leresolver.acme.storage=/certs/acme.json"
+      - "--certificatesresolvers.leresolver.acme.httpchallenge.entrypoint=web"
+      # use letsencrypt staging (until verified that everything works as expected)
+      - "--certificatesresolvers.leresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - web
+    volumes:
+      - "./certs:/certs"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - "traefik.enable=true"
+      # workaround: route /traefik (and /api) based on referrer
+      # see: https://github.com/traefik/traefik/issues/5853
+      - "traefik.http.routers.api.rule=Host(`${TRAEFIK_HOST}`) && (PathPrefix(`/traefik`) || Headers(`Referer`, `https://${TRAEFIK_HOST}/traefik/dashboard/`))"
+      - "traefik.http.routers.api.entryPoints=web,websecure"
+      # Enable TLS and use letsencrypt resolver
+      - "traefik.http.routers.api.tls=true"
+      - "traefik.http.routers.api.tls.certresolver=leresolver"
+      - "traefik.http.routers.api.service=api@internal"
+#      - "traefik.http.routers.default.priority=-1"
+      # Activate Middlewares
+      - "traefik.http.routers.api.middlewares=traefik-strip-prefix,apiauth"
+      # middleware - Strip prefix (global "strip-prefix" middleware down below does not work for this case here)
+      - "traefik.http.middlewares.traefik-strip-prefix.stripprefix.prefixes=/traefik"
+      # middleware - add Auth for API and Dashboard access
+      - "traefik.http.middlewares.apiauth.basicauth.users=${APIAUTH}"
+      # redirect http tp https
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      # global middleware: strip prefix and add missing trailing slash
+      # eg. for portainer and other applications which do not natively support running behind a subpath/subdirectory
+      - "traefik.http.middlewares.strip-prefix.chain.middlewares=strip-prefix-1,strip-prefix-2"
+      - "traefik.http.middlewares.strip-prefix-1.redirectregex.regex=^(https?://[^/]+/[a-z0-9_]+)$$"
+      - "traefik.http.middlewares.strip-prefix-1.redirectregex.replacement=$${1}/"
+      - "traefik.http.middlewares.strip-prefix-1.redirectregex.permanent=true"
+      - "traefik.http.middlewares.strip-prefix-2.stripprefixregex.regex=/[a-z0-9_]+"
+
   portainer:
     image: portainer/portainer-ce:latest
     restart: unless-stopped
