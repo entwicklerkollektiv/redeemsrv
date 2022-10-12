@@ -72,15 +72,25 @@ services:
   portainer:
     image: portainer/portainer-ce:latest
     restart: unless-stopped
-    ports:
-      - "8000:5000"
-      - "9443:9443"
+    networks:
+      - web
     volumes:
       - "./portainer-data:/data"
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
+      # portainer has to respect proxy settings if present in env
       - http_proxy=${http_proxy}
       - https_proxy=${https_proxy}
       - HTTP_PROXY=${http_proxy}
       - HTTPS_PROXY=${https_proxy}
-      - NO_PROXY=${no_proxy},templatesrv
+      - NO_PROXY=${no_proxy}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.entrypoints=websecure"
+      - "traefik.http.routers.portainer.rule=Host(`${TRAEFIK_HOST}`) && PathPrefix(`/portainer`)"
+      - "traefik.http.routers.portainer.tls=true"
+      - "traefik.http.routers.portainer.tls.certresolver=leresolver"
+      # Activate Middlewares - strip prefix (global middleware defined above in traefik container)
+      - "traefik.http.routers.portainer.middlewares=strip-prefix"
+      # bind to port 9000 in portainer container
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
