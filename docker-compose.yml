@@ -1,4 +1,12 @@
 version: "3.9"
+
+networks:
+  web:
+    external:
+      name: web
+  default:
+    driver: bridge
+
 services:
   portainer:
     image: portainer/portainer-ce:latest
