@@ -94,3 +94,9 @@ services:
       - "traefik.http.routers.portainer.middlewares=strip-prefix"
       # bind to port 9000 in portainer container
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+
+  templates:
+    build: ./templates
+    hostname: redeemsrv-templates
+    networks:
+      - web
