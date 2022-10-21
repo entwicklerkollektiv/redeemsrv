@@ -71,6 +71,9 @@ services:
 
   portainer:
     image: portainer/portainer-ce:latest
+    command:
+      # use templatesrv container to locally serve templates
+      - "--templates=http://redeemsrv-templates/templates.json"
     restart: unless-stopped
     networks:
       - web
