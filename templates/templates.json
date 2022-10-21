@@ -1,0 +1,60 @@
+{
+  "version": "2",
+  "templates": [
+    {
+      "type": 1,
+      "title": "Registry",
+      "description": "Docker image registry",
+      "categories": ["docker"],
+      "platform": "linux",
+      "logo": "https://portainer-io-assets.sfo2.digitaloceanspaces.com/logos/registry.png",
+      "image": "registry:latest",
+      "ports": ["5000/tcp"],
+      "volumes": [
+        {
+          "container": "/var/lib/registry"
+        }
+      ]
+    },
+    {
+      "type": 3,
+      "title": "WordPress-local",
+      "description": "WordPress setup with a MySQL database",
+      "note": "Deploys a WordPress instance connected to a MySQL database.",
+      "categories": ["CMS"],
+      "platform": "linux",
+      "logo": "https://portainer-io-assets.sfo2.digitaloceanspaces.com/logos/wordpress.png",
+      "repository": {
+        "url": "http://redeemsrv-templates/git/templates.git",
+        "stackfile": "stacks/wordpress/docker-compose.yml"
+      },
+      "env": [
+        {
+          "name": "MYSQL_DATABASE_PASSWORD",
+          "label": "Database root password",
+          "description": "Password used by the MySQL root user."
+        }
+      ]
+    },
+    {
+      "type": 3,
+      "title": "WordPress",
+      "description": "WordPress setup with a MySQL database",
+      "note": "Deploys a WordPress instance connected to a MySQL database.",
+      "categories": ["CMS"],
+      "platform": "linux",
+      "logo": "https://portainer-io-assets.sfo2.digitaloceanspaces.com/logos/wordpress.png",
+      "repository": {
+        "url": "https://github.com/portainer/templates",
+        "stackfile": "stacks/wordpress/docker-compose.yml"
+      },
+      "env": [
+        {
+          "name": "MYSQL_DATABASE_PASSWORD",
+          "label": "Database root password",
+          "description": "Password used by the MySQL root user."
+        }
+      ]
+    }
+  ]
+}
