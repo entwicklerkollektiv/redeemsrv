@@ -71,6 +71,9 @@ services:
 
   portainer:
     image: portainer/portainer-ce:latest
+    command:
+      # use templatesrv container to locally serve templates
+      - "--templates=http://redeemsrv-templates/templates.json"
     restart: unless-stopped
     networks:
       - web
@@ -94,3 +97,9 @@ services:
       - "traefik.http.routers.portainer.middlewares=strip-prefix"
       # bind to port 9000 in portainer container
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+
+  templates:
+    build: ./templates
+    hostname: redeemsrv-templates
+    networks:
+      - web
