@@ -30,7 +30,7 @@ services:
       - "--certificatesresolvers.leresolver.acme.storage=/certs/acme.json"
       - "--certificatesresolvers.leresolver.acme.httpchallenge.entrypoint=web"
       # use letsencrypt staging (until verified that everything works as expected)
-      - "--certificatesresolvers.leresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      #- "--certificatesresolvers.leresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
     ports:
       - "80:80"
       - "443:443"
