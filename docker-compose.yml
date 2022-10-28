@@ -87,6 +87,7 @@ services:
       - HTTP_PROXY=${http_proxy}
       - HTTPS_PROXY=${https_proxy}
       - NO_PROXY=${no_proxy}
+      - TRAEFIK_HOST=${TRAEFIK_HOST}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.portainer.entrypoints=websecure"
