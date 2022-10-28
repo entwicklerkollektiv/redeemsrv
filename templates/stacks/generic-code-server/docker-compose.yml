@@ -9,9 +9,9 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Berlin
-      - PASSWORD=code #optional
+      - PASSWORD=${DEV_PASS} #optional
 #      - HASHED_PASSWORD= #optional
-      - SUDO_PASSWORD=code #optional
+      - SUDO_PASSWORD=${DEV_PASS} #optional
 #      - SUDO_PASSWORD_HASH= #optional
       - PROXY_DOMAIN=${STACK_NAME}.${TRAEFIK_HOST} #optional
 #      - DEFAULT_WORKSPACE=/config/workspace #optional

@@ -79,6 +79,11 @@
           "description": "User for which this dev container is created."
         },
         {
+          "name": "DEV_PASS",
+          "label": "Password",
+          "description": "Password for code-server and sudo"
+        },
+        {
           "name": "HOME_VOLUME_NAME",
           "label": "Home Volume Name",
           "default": "user-home",
