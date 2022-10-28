@@ -1,0 +1,8 @@
+version: '3'
+
+tasks:
+  build-generic-code-server:
+    desc: "Build image - generic-code-server"
+    dir: generic-code-server
+    cmds:
+      - "docker build -t redeemsrv.local/generic-code-server:0.0.1 ."
