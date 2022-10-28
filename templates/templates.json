@@ -55,6 +55,41 @@
           "description": "Password used by the MySQL root user."
         }
       ]
+    },
+    {
+      "type": 3,
+      "title": "code-server",
+      "description": "VS Code Server",
+      "note": "",
+      "categories": ["DEV"],
+      "platform": "linux",
+      "repository": {
+        "url": "http://redeemsrv-templates/git/templates.git",
+        "stackfile": "stacks/generic-code-server/docker-compose.yml"
+      },
+      "env": [
+        {
+          "name": "STACK_NAME",
+          "label": "Stack Name",
+          "description": "Name of the stack (for traefik config)"
+        },
+        {
+          "name": "DEV_USER",
+          "label": "User",
+          "description": "User for which this dev container is created."
+        },
+        {
+          "name": "DEV_PASS",
+          "label": "Password",
+          "description": "Password for code-server and sudo"
+        },
+        {
+          "name": "HOME_VOLUME_NAME",
+          "label": "Home Volume Name",
+          "default": "user-home",
+          "description": "Volume name for the users home dir"
+        }
+      ]
     }
   ]
 }

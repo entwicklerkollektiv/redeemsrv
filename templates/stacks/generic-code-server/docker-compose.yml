@@ -1,0 +1,38 @@
+# we can only use Version2 due to portainers limitations
+version: '2'
+
+services:
+  code:
+     image: redeemsrv.local/generic-code-server:0.0.1
+     hostname: ${STACK_NAME}
+     environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+      - PASSWORD=${DEV_PASS} #optional
+#      - HASHED_PASSWORD= #optional
+      - SUDO_PASSWORD=${DEV_PASS} #optional
+#      - SUDO_PASSWORD_HASH= #optional
+      - PROXY_DOMAIN=${STACK_NAME}.${TRAEFIK_HOST} #optional
+#      - DEFAULT_WORKSPACE=/config/workspace #optional
+     volumes:
+       - user-home:/home/${DEV_USER}
+     networks:
+       - web
+     labels:
+       - "traefik.enable=true"
+       - traefik.http.routers.${STACK_NAME}-https.rule=Host(`${STACK_NAME}.${TRAEFIK_HOST}`)
+       - traefik.http.routers.${STACK_NAME}-https.entrypoints=websecure
+       - traefik.http.routers.${STACK_NAME}-https.tls=true
+       - traefik.http.routers.${STACK_NAME}-https.tls.certresolver=leresolver
+       - traefik.http.services.${STACK_NAME}.loadbalancer.server.port=8443
+
+volumes:
+  user-home:
+    external: true
+    name: ${HOME_VOLUME_NAME}
+
+networks:
+  web:
+    external:
+      name: web
