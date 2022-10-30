@@ -74,6 +74,9 @@ services:
     command:
       # use templatesrv container to locally serve templates
       - "--templates=http://redeemsrv-templates/templates.json"
+      # hide containers with matching labels from portainer
+      - "--hide-label=owner=system"
+      - "--hide-label=hidden=true"
     restart: unless-stopped
     networks:
       - web
