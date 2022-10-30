@@ -40,6 +40,10 @@ services:
       - "./certs:/certs"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
+      # hide from portainer
+      - "hidden=true"
+      - "owner=system"
+      # enable traefik
       - "traefik.enable=true"
       # workaround: route /traefik (and /api) based on referrer
       # see: https://github.com/traefik/traefik/issues/5853
@@ -74,6 +78,9 @@ services:
     command:
       # use templatesrv container to locally serve templates
       - "--templates=http://redeemsrv-templates/templates.json"
+      # hide containers with matching labels from portainer
+      - "--hide-label=owner=system"
+      - "--hide-label=hidden=true"
     restart: unless-stopped
     networks:
       - web
@@ -89,6 +96,10 @@ services:
       - NO_PROXY=${no_proxy}
       - TRAEFIK_HOST=${TRAEFIK_HOST}
     labels:
+      # hide from portainer
+      - "hidden=true"
+      - "owner=system"
+      # enable traefik on this container
       - "traefik.enable=true"
       - "traefik.http.routers.portainer.entrypoints=websecure"
       - "traefik.http.routers.portainer.rule=Host(`${TRAEFIK_HOST}`) && PathPrefix(`/portainer`)"
@@ -104,3 +115,7 @@ services:
     hostname: redeemsrv-templates
     networks:
       - web
+    labels:
+      # hide from portainer
+      - "hidden=true"
+      - "owner=system"
